@@ -6,7 +6,6 @@ import {
   useGetInsuranceForms,
 } from '../../../api/insurance/useCase'
 import useFormDraft from '../../../hooks/useFormDraft'
-import {data} from '../data'
 import SmartField from '../smartField/smartField'
 import {convertDatesToDayjs} from './formView.util'
 
@@ -15,10 +14,10 @@ const FormView = () => {
   const [form] = Form.useForm()
   const [searchParams] = useSearchParams()
   const insuranceType = searchParams.get('t')
-  const formIds = data.map((item) => item.formId)
   const insuranceForms = useGetInsuranceForms()
   const createInsurance = useCreateInsurance()
   const {draft, removeDraft} = useFormDraft(insuranceType)
+  const formIds = insuranceForms.data?.data.map((item) => item.formId) ?? []
 
   const handleFinish = (data: any) => {
     createInsurance.mutate(data, {
@@ -39,7 +38,7 @@ const FormView = () => {
     if (!insuranceForms.isLoading && Object.keys(draft).length > 0) {
       form.setFieldsValue(convertDatesToDayjs(draft))
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [insuranceForms.isLoading])
 
   return (
